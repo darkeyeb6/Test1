@@ -2,74 +2,36 @@ local plr = game.Players.LocalPlayer
 
 -- Function to stop animations
 local function StopAnim()
-    if plr.Character and plr.Character:FindFirstChild("Humanoid") then
-        for _, track in pairs(plr.Character.Humanoid:GetPlayingAnimationTracks()) do
-            track:Stop()
-        end
+    for _, track in pairs(plr.Character.Humanoid:GetPlayingAnimationTracks()) do
+        track:Stop()
     end
 end
 
 -- Function to change the animations
 local function changeAnimation(animationIds)
-    local character = plr.Character
-    if not character then return end -- Ensure the character exists
-
-    local Animate = character:FindFirstChild("Animate")
-    if not Animate then return end -- Ensure Animate exists
-
-    -- Disable Animate before changing animations
-    Animate.Disabled = true
-    StopAnim()
-
-    -- Set animations safely
-    if Animate:FindFirstChild("idle") then
-        if Animate.idle:FindFirstChild("Animation1") then
-            Animate.idle.Animation1.AnimationId = animationIds.Idle1
-        end
-        if Animate.idle:FindFirstChild("Animation2") then
-            Animate.idle.Animation2.AnimationId = animationIds.Idle2
-        end
-    end
-
-    if Animate:FindFirstChild("walk") and Animate.walk:FindFirstChild("WalkAnim") then
+    local Animate = plr.Character:FindFirstChild("Animate")
+    if Animate then
+        Animate.Disabled = true
+        StopAnim()
+        Animate.idle.Animation1.AnimationId = animationIds.Idle1
+        Animate.idle.Animation2.AnimationId = animationIds.Idle2
         Animate.walk.WalkAnim.AnimationId = animationIds.Walk
-    end
-
-    if Animate:FindFirstChild("run") and Animate.run:FindFirstChild("RunAnim") then
         Animate.run.RunAnim.AnimationId = animationIds.Run
-    end
-
-    if Animate:FindFirstChild("jump") and Animate.jump:FindFirstChild("JumpAnim") then
         Animate.jump.JumpAnim.AnimationId = animationIds.Jump
-    end
-
-    if Animate:FindFirstChild("climb") and Animate.climb:FindFirstChild("ClimbAnim") then
         Animate.climb.ClimbAnim.AnimationId = animationIds.Climb
-    end
-
-    if Animate:FindFirstChild("fall") and Animate.fall:FindFirstChild("FallAnim") then
         Animate.fall.FallAnim.AnimationId = animationIds.Fall
+        Animate.swim.Swim.AnimationId = animationIds.Swim
+        Animate.swimidle.SwimIdle.AnimationId = animationIds.SwimIdle
+        Animate.Disabled = false
     end
-
-    if Animate:FindFirstChild("swim") then
-        if Animate.swim:FindFirstChild("Swim") then
-            Animate.swim.Swim.AnimationId = animationIds.Swim
-        end
-        if Animate.swim:FindFirstChild("SwimIdle") then
-            Animate.swim.SwimIdle.AnimationId = animationIds.SwimIdle
-        end
-    end
-
-    Animate.Disabled = false
 end
 
 -- Function to handle character respawn or reset
 local function onCharacterAdded(character)
-    -- Wait for Humanoid to load
-    local humanoid = character:WaitForChild("Humanoid", 10)
-    if not humanoid then return end -- Ensure Humanoid exists
+    -- Wait for the humanoid to load
+    repeat wait() until character:FindFirstChild("Humanoid")
 
-    -- Apply custom animations
+    -- Apply the custom animation each time the character spawns or resets
     changeAnimation({
         Idle1 = "rbxassetid://891621366",
         Idle2 = "rbxassetid://891633237",
@@ -86,7 +48,7 @@ end
 -- Listen for character respawn or reset
 plr.CharacterAdded:Connect(onCharacterAdded)
 
--- Apply immediately if character already exists
+-- If the character already exists, apply the animation immediately
 if plr.Character then
     onCharacterAdded(plr.Character)
 end
